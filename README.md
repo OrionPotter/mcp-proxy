@@ -12,9 +12,7 @@
 
 ## 项目名称
 
-原项目已重构并重新命名为 `MCP Gateway`。
-
-这个名字比 `multi-mcp` 更直观，也更符合它的职责：作为多个 MCP 服务的统一网关。
+`MCP Gateway`：作为多个 MCP 服务的统一网关。
 
 ## 安装
 
@@ -181,5 +179,3 @@ uv run pytest -q
 - SSE 网关传输
 - Streamable HTTP 网关传输
 - Streamable HTTP 后端接入
-
-说明：Windows 沙箱环境下，进程级 `stdio` 端到端测试会受到命名管道权限限制，因此测试中会自动跳过该场景；逻辑层仍通过单元测试覆盖。
