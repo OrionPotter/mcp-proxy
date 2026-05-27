@@ -1,0 +1,32 @@
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+env/
+venv/
+
+# Editor settings
+.vscode/
+
+# Test output
+htmlcov/
+coverage.xml
+.cache/
+.tox/
+.pytest_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# Secrets / credentials (only if created)
+.env
+.env.*
+
+# ignore anything in msc directory recursively
+msc/**

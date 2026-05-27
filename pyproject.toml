@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling>=1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mcp-gateway"
+version = "0.2.0"
+description = "A minimal MCP proxy that merges multiple backend servers behind one endpoint."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [
+  { name = "OpenAI Codex" }
+]
+dependencies = [
+  "mcp>=1.27.1,<2.0.0",
+  "pydantic>=2.11.0,<3.0.0",
+  "starlette>=0.46.0,<1.0.0",
+  "uvicorn>=0.34.0,<1.0.0"
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.0,<9.0.0",
+  "pytest-asyncio>=0.26.0,<1.0.0"
+]
+
+[project.scripts]
+mcp-gateway = "mcp_gateway.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mcp_gateway"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = ["-p", "no:cacheprovider"]
