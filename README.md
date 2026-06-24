@@ -1,62 +1,58 @@
 # MCP Gateway
 
-`MCP Gateway` 是一个精简版 MCP 聚合代理。它把多个后端 MCP Server 合并成一个统一入口，对外暴露单一的 MCP 服务，同时保留工具名空间隔离，避免同名工具冲突。
+**English** | [简体中文](README.zh-CN.md)
 
-当前项目只保留核心能力：
+MCP Gateway is a lightweight MCP aggregation proxy. It merges multiple backend MCP Servers into a single unified endpoint, exposing one MCP service externally while preserving tool namespace isolation to prevent name collisions across backends.
 
-- 聚合多个后端 MCP Server
-- 支持后端 `stdio` / `sse` / `streamable-http`
-- 支持网关自身以 `stdio` / `sse` / `streamable-http` 运行
-- 提供基础 HTTP 管理接口：`/health`、`/servers`、`/tools`
-- 使用 `uv` 管理虚拟环境和依赖
+## Features
 
-## 项目名称
+- Aggregate multiple backend MCP Servers behind one endpoint
+- Backend transport support: `stdio` / `sse` / `streamable-http`
+- Gateway transport support: `stdio` / `sse` / `streamable-http`
+- Built-in HTTP management API: `/health`, `/servers`, `/tools`
+- Managed with `uv` for virtual environments and dependencies
 
-原项目已重构并重新命名为 `MCP Gateway`。
-
-这个名字比 `multi-mcp` 更直观，也更符合它的职责：作为多个 MCP 服务的统一网关。
-
-## 安装
+## Installation
 
 ```bash
 uv sync --extra dev
 ```
 
-这会：
+This will:
 
-- 创建 `.venv`
-- 安装开发依赖
-- 解析并锁定当前依赖版本
+- Create a `.venv` virtual environment
+- Install development dependencies
+- Resolve and lock dependency versions
 
-当前锁定的 MCP Python SDK 版本为 `mcp==1.27.1`。
+Current pinned MCP Python SDK version: `mcp==1.27.1`.
 
-## 启动方式
+## Usage
 
-### 1. 以 stdio 方式运行网关
+### 1. Run gateway in stdio mode
 
 ```bash
 uv run python main.py --config ./examples/config/servers.json
 ```
 
-### 2. 以 SSE 方式运行网关
+### 2. Run gateway in SSE mode
 
 ```bash
 uv run python main.py --transport sse --config ./examples/config/sse-backend.json
 ```
 
-默认监听：`http://127.0.0.1:8080/sse`
+Default listen address: `http://127.0.0.1:8080/sse`
 
-### 3. 以 Streamable HTTP 方式运行网关
+### 3. Run gateway in Streamable HTTP mode
 
 ```bash
 uv run python main.py --transport streamable-http --config ./examples/config/streamable-http-backend.json
 ```
 
-默认监听：`http://127.0.0.1:8080/mcp`
+Default listen address: `http://127.0.0.1:8080/mcp`
 
-## 配置格式
+## Configuration
 
-配置文件统一使用：
+Configuration files use a unified format:
 
 ```json
 {
@@ -74,7 +70,7 @@ uv run python main.py --transport streamable-http --config ./examples/config/str
 }
 ```
 
-### stdio 后端示例
+### stdio backend example
 
 ```json
 {
@@ -93,9 +89,9 @@ uv run python main.py --transport streamable-http --config ./examples/config/str
 }
 ```
 
-见：[examples/config/servers.json](/D:/Git仓库/multi-mcp/examples/config/servers.json)
+See: [examples/config/servers.json](examples/config/servers.json)
 
-### SSE 后端示例
+### SSE backend example
 
 ```json
 {
@@ -108,9 +104,9 @@ uv run python main.py --transport streamable-http --config ./examples/config/str
 }
 ```
 
-见：[examples/config/sse-backend.json](/D:/Git仓库/multi-mcp/examples/config/sse-backend.json)
+See: [examples/config/sse-backend.json](examples/config/sse-backend.json)
 
-### Streamable HTTP 后端示例
+### Streamable HTTP backend example
 
 ```json
 {
@@ -123,27 +119,27 @@ uv run python main.py --transport streamable-http --config ./examples/config/str
 }
 ```
 
-见：[examples/config/streamable-http-backend.json](/D:/Git仓库/multi-mcp/examples/config/streamable-http-backend.json)
+See: [examples/config/streamable-http-backend.json](examples/config/streamable-http-backend.json)
 
-## 工具名空间规则
+## Tool Namespace
 
-网关会把工具名改写为：
+The gateway rewrites tool names using the pattern:
 
 ```text
 <server_name>.<tool_name>
 ```
 
-例如：
+For example:
 
 - `calculator.add`
 - `calculator.multiply`
 - `remote-echo.ping`
 
-这样可以安全聚合多个存在同名工具的后端。
+This allows safe aggregation of multiple backends that may expose tools with identical names.
 
-## HTTP 管理接口
+## HTTP Management API
 
-当网关以 `sse` 或 `streamable-http` 方式运行时，会额外提供：
+When the gateway runs in `sse` or `streamable-http` mode, it additionally exposes:
 
 - `GET /health`
 - `GET /servers`
@@ -151,9 +147,9 @@ uv run python main.py --transport streamable-http --config ./examples/config/str
 - `DELETE /servers/{name}`
 - `GET /tools`
 
-`POST /servers` 的请求体与主配置文件格式一致。
+The `POST /servers` request body follows the same format as the main configuration file.
 
-## 目录结构
+## Project Structure
 
 ```text
 main.py
@@ -162,24 +158,24 @@ examples/config/
 tests/
 ```
 
-其中：
+Where:
 
-- [main.py](/D:/Git仓库/multi-mcp/main.py) 是统一入口
-- [src/mcp_gateway/app.py](/D:/Git仓库/multi-mcp/src/mcp_gateway/app.py) 负责网关生命周期和 HTTP 服务
-- [src/mcp_gateway/clients.py](/D:/Git仓库/multi-mcp/src/mcp_gateway/clients.py) 负责后端连接管理
-- [src/mcp_gateway/proxy.py](/D:/Git仓库/multi-mcp/src/mcp_gateway/proxy.py) 负责 MCP 请求路由与聚合
+- [main.py](main.py) — unified entry point
+- [src/mcp_gateway/app.py](src/mcp_gateway/app.py) — gateway lifecycle and HTTP service
+- [src/mcp_gateway/clients.py](src/mcp_gateway/clients.py) — backend connection management
+- [src/mcp_gateway/proxy.py](src/mcp_gateway/proxy.py) — MCP request routing and aggregation
 
-## 测试
+## Testing
 
 ```bash
 uv run pytest -q
 ```
 
-当前测试覆盖：
+Current test coverage:
 
-- 代理工具聚合与路由
-- SSE 网关传输
-- Streamable HTTP 网关传输
-- Streamable HTTP 后端接入
+- Proxy tool aggregation and routing
+- SSE gateway transport
+- Streamable HTTP gateway transport
+- Streamable HTTP backend connectivity
 
-说明：Windows 沙箱环境下，进程级 `stdio` 端到端测试会受到命名管道权限限制，因此测试中会自动跳过该场景；逻辑层仍通过单元测试覆盖。
+> **Note:** On Windows sandbox environments, process-level `stdio` end-to-end tests are automatically skipped due to named pipe permission restrictions. The logic layer is still covered by unit tests.
