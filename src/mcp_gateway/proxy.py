@@ -25,7 +25,7 @@ class PromptRoute:
 
 
 class MCPGatewayProxy(server.Server):
-    def __init__(self, client_manager: MCPClientManager, name: str = "MCP Gateway") -> None:
+    def __init__(self, client_manager: MCPClientManager, name: str = "mcp-gateway") -> None:
         super().__init__(name)
         self.client_manager = client_manager
         self.logger = get_logger("proxy")
@@ -40,7 +40,7 @@ class MCPGatewayProxy(server.Server):
     async def create(
         cls,
         client_manager: MCPClientManager,
-        name: str = "MCP Gateway",
+        name: str = "mcp-gateway",
     ) -> "MCPGatewayProxy":
         proxy = cls(client_manager=client_manager, name=name)
         await proxy.refresh_all_clients()

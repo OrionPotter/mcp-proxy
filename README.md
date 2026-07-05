@@ -1,8 +1,8 @@
-# MCP Gateway
+# mcp-gateway
 
 **English** | [简体中文](README.zh-CN.md)
 
-MCP Gateway is a lightweight MCP aggregation proxy. It merges multiple backend MCP Servers into a single unified endpoint, exposing one MCP service externally while preserving tool namespace isolation to prevent name collisions across backends.
+`mcp-gateway` is a lightweight MCP aggregation proxy. It merges multiple backend MCP Servers into a single unified endpoint, exposing one MCP service externally while preserving tool namespace isolation to prevent name collisions across backends.
 
 ## Features
 

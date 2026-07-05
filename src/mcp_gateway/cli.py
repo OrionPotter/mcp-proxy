@@ -7,7 +7,7 @@ from src.mcp_gateway.app import MCPGatewayApp
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Run the MCP Gateway proxy server.")
+    parser = argparse.ArgumentParser(description="Run the mcp-gateway proxy server.")
     parser.add_argument(
         "--transport",
         choices=["stdio", "sse", "streamable-http"],
@@ -27,7 +27,7 @@ def build_parser() -> argparse.ArgumentParser:
         default="INFO",
         help="Logging level.",
     )
-    parser.add_argument("--name", default="MCP Gateway", help="Gateway server name shown to clients.")
+    parser.add_argument("--name", default="mcp-gateway", help="Gateway server name shown to clients.")
     return parser
 
 

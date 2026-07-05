@@ -25,7 +25,7 @@ class GatewaySettings(BaseModel):
     host: str = "127.0.0.1"
     port: int = 8080
     log_level: str = "INFO"
-    name: str = "MCP Gateway"
+    name: str = "mcp-gateway"
     sse_path: str = "/sse"
     sse_message_path: str = "/messages/"
     streamable_http_path: str = "/mcp"
@@ -171,4 +171,3 @@ class MCPGatewayApp:
             return JSONResponse({"error": "Proxy not initialized."}, status_code=500)
 
         return JSONResponse({"tools": await self.proxy.list_server_tools()})
-
