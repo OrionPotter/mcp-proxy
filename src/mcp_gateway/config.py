@@ -40,6 +40,21 @@ class RemoteServerConfig(BaseModel):
 
         return self
 
+    def resolve_relative_paths(self, base_dir: Path) -> "RemoteServerConfig":
+        if self.transport != "stdio":
+            return self
+
+        if self.command is not None and _looks_like_path(self.command):
+            self.command = str((base_dir / self.command).resolve())
+
+        if self.cwd is not None and not Path(self.cwd).is_absolute():
+            self.cwd = str((base_dir / self.cwd).resolve())
+
+        self.args = [
+            str((base_dir / arg).resolve()) if _looks_like_path(arg) else arg for arg in self.args
+        ]
+        return self
+
 
 class GatewayConfig(BaseModel):
     mcpServers: dict[str, RemoteServerConfig] = Field(default_factory=dict)
@@ -50,5 +65,13 @@ class GatewayConfig(BaseModel):
         if not config_path.exists():
             raise FileNotFoundError(f"Config file not found: {config_path}")
 
-        return cls.model_validate(json.loads(config_path.read_text(encoding="utf-8")))
+        config = cls.model_validate(json.loads(config_path.read_text(encoding="utf-8")))
+        base_dir = config_path.resolve().parent
+        for server_config in config.mcpServers.values():
+            server_config.resolve_relative_paths(base_dir)
+        return config
 
+
+def _looks_like_path(value: str) -> bool:
+    path = Path(value)
+    return path.is_absolute() or value.startswith(".") or "/" in value or "\\" in value

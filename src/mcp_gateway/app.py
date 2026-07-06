@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from contextlib import asynccontextmanager
 from typing import Any
 
@@ -7,7 +8,7 @@ import uvicorn
 from mcp.server.sse import SseServerTransport
 from mcp.server.stdio import stdio_server
 from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from starlette.applications import Starlette
 from starlette.requests import Request
 from starlette.responses import JSONResponse
@@ -146,11 +147,29 @@ class MCPGatewayApp:
         if request.method == "GET":
             return JSONResponse({"servers": sorted(self.client_manager.clients)})
 
-        payload = await request.json()
-        config = GatewayConfig.model_validate(payload)
-        await self.client_manager.add_from_config(config.mcpServers)
-        for name in config.mcpServers:
-            await self.proxy.register_client(name, self.client_manager.clients[name])
+        try:
+            payload = await request.json()
+        except json.JSONDecodeError as exc:
+            return JSONResponse({"error": f"Invalid JSON payload: {exc.msg}."}, status_code=400)
+
+        try:
+            config = GatewayConfig.model_validate(payload)
+        except ValidationError as exc:
+            return JSONResponse({"error": "Invalid server configuration.", "details": exc.errors()}, status_code=422)
+
+        if not config.mcpServers:
+            return JSONResponse(
+                {"error": "Invalid server configuration.", "details": ["At least one server must be provided in 'mcpServers'."]},
+                status_code=422,
+            )
+
+        try:
+            await self.client_manager.add_from_config(config.mcpServers)
+            for name in config.mcpServers:
+                await self.proxy.register_client(name, self.client_manager.clients[name])
+        except Exception as exc:
+            self.logger.exception("Failed to add backend servers: %s", exc)
+            return JSONResponse({"error": "Failed to add backend servers."}, status_code=502)
 
         return JSONResponse({"added": sorted(config.mcpServers)})
 
